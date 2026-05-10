@@ -1,0 +1,86 @@
+<UserControl x:Class="FateDefiner.Views.DiceRollerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="280"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ LEFT: Roller ══ -->
+        <StackPanel Grid.Column="0">
+
+            <TextBlock Text="Dice Roller" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="Click a die to roll. Adjust count and modifier below."
+                       Foreground="{StaticResource MutedTextBrush}" FontSize="12"
+                       Margin="0,0,0,24"/>
+
+            <!-- Dice buttons -->
+            <WrapPanel Margin="0,0,0,20">
+                <Button Content="d4"   Command="{Binding RollD4Command}"   Style="{StaticResource DiceButtonStyle}"/>
+                <Button Content="d6"   Command="{Binding RollD6Command}"   Style="{StaticResource DiceButtonStyle}"/>
+                <Button Content="d8"   Command="{Binding RollD8Command}"   Style="{StaticResource DiceButtonStyle}"/>
+                <Button Content="d10"  Command="{Binding RollD10Command}"  Style="{StaticResource DiceButtonStyle}"/>
+                <Button Content="d12"  Command="{Binding RollD12Command}"  Style="{StaticResource DiceButtonStyle}"/>
+                <Button Content="d20"  Command="{Binding RollD20Command}"  Style="{StaticResource DiceButtonStyle}"/>
+                <Button Content="d100" Command="{Binding RollD100Command}" Style="{StaticResource DiceButtonStyle}"/>
+            </WrapPanel>
+
+            <!-- Number of dice + modifier -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="NUMBER OF DICE" Style="{StaticResource SectionLabelStyle}"/>
+                    <TextBox Text="{Binding NumberOfDice, UpdateSourceTrigger=PropertyChanged}"
+                             Width="80" FontSize="16" TextAlignment="Center"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="MODIFIER (+/−)" Style="{StaticResource SectionLabelStyle}"/>
+                    <TextBox Text="{Binding Modifier, UpdateSourceTrigger=PropertyChanged}"
+                             Width="80" FontSize="16" TextAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Result display -->
+            <Border Style="{StaticResource CardPanelStyle}" HorizontalAlignment="Left"
+                    MinWidth="300">
+                <StackPanel>
+                    <TextBlock Text="{Binding FormulaDisplay}"
+                               FontSize="13" Foreground="{StaticResource MutedTextBrush}"
+                               Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding ResultDisplay}"
+                               FontSize="60" FontWeight="Bold"
+                               Foreground="{StaticResource AccentBrush}"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- ══ RIGHT: History ══ -->
+        <Border Grid.Column="2" Style="{StaticResource CardPanelStyle}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"
+                            Margin="0,0,0,8">
+                    <TextBlock Text="ROLL HISTORY" Style="{StaticResource SectionLabelStyle}"
+                               VerticalAlignment="Center"/>
+                    <Button Content="Clear" Command="{Binding ClearHistoryCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Padding="8,4" FontSize="10" Margin="12,0,0,0"/>
+                </StackPanel>
+
+                <ListBox ItemsSource="{Binding History}"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontSize="12"
+                                       FontFamily="Consolas, Courier New"
+                                       Foreground="{StaticResource TextBrush}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

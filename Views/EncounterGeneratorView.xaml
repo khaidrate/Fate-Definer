@@ -1,0 +1,233 @@
+<UserControl x:Class="FateDefiner.Views.EncounterGeneratorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ LEFT: Encounter Generator ══ -->
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="Encounter Generator" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="Generate random combat encounters for any environment"
+                       Foreground="{StaticResource MutedTextBrush}" FontSize="12"
+                       Margin="0,0,0,20"/>
+
+            <Border Style="{StaticResource CardPanelStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="ENCOUNTER SETTINGS" Style="{StaticResource SectionLabelStyle}"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Environment" Style="{StaticResource SectionLabelStyle}"/>
+                            <ComboBox ItemsSource="{Binding Environments}"
+                                      SelectedItem="{Binding SelectedEnvironment}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Difficulty" Style="{StaticResource SectionLabelStyle}"/>
+                            <ComboBox ItemsSource="{Binding Difficulties}"
+                                      SelectedItem="{Binding SelectedDifficulty}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Button Content="⚔  Generate Encounter"
+                            Command="{Binding GenerateEncounterCommand}"
+                            HorizontalAlignment="Left" Padding="16,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Encounter Result -->
+            <Border Style="{StaticResource CardPanelStyle}">
+                <StackPanel>
+                    <TextBlock Text="ENCOUNTER" Style="{StaticResource SectionLabelStyle}"/>
+
+                    <TextBlock Text="{Binding CurrentEncounter.Name}"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="{StaticResource AccentBrush}"
+                               Margin="0,0,0,8">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasEncounter}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Text="{Binding CurrentEncounter.Description}"
+                               TextWrapping="Wrap" FontSize="13" LineHeight="20"
+                               Margin="0,0,0,10">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasEncounter}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasEncounter}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Border Background="{StaticResource SurfaceBrush}"
+                                CornerRadius="4" Padding="8,4" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Difficulty: " Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
+                                <TextBlock Text="{Binding CurrentEncounter.Difficulty}"
+                                           Foreground="{StaticResource AccentBrush}" FontSize="11" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{StaticResource SurfaceBrush}"
+                                CornerRadius="4" Padding="8,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Environment: " Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
+                                <TextBlock Text="{Binding SelectedEnvironment}"
+                                           Foreground="{StaticResource AccentBrush}" FontSize="11" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <TextBlock Text="Generate an encounter above to begin."
+                               Foreground="{StaticResource MutedTextBrush}" FontSize="12">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasEncounter}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- ══ RIGHT: Loot Generator ══ -->
+        <StackPanel Grid.Column="2">
+            <TextBlock Text="Loot Generator" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="Generate random treasure for your encounter"
+                       Foreground="{StaticResource MutedTextBrush}" FontSize="12"
+                       Margin="0,0,0,20"/>
+
+            <Border Style="{StaticResource CardPanelStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="LOOT SETTINGS" Style="{StaticResource SectionLabelStyle}"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Treasure Tier" Style="{StaticResource SectionLabelStyle}"/>
+                            <ComboBox ItemsSource="{Binding LootTiers}"
+                                      SelectedItem="{Binding SelectedLootTier}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Party Level" Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBox Text="{Binding PartyLevel, UpdateSourceTrigger=PropertyChanged}"
+                                     TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Button Content="&#x1F4B0;  Generate Loot"
+                            Command="{Binding GenerateLootCommand}"
+                            HorizontalAlignment="Left" Padding="16,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Loot Results -->
+            <Border Style="{StaticResource CardPanelStyle}">
+                <StackPanel>
+                    <TextBlock Text="TREASURE HOARD" Style="{StaticResource SectionLabelStyle}"/>
+
+                    <TextBlock Text="Generate loot above to see your treasure."
+                               Foreground="{StaticResource MutedTextBrush}" FontSize="12">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasLoot}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <ItemsControl ItemsSource="{Binding Loot}">
+                        <ItemsControl.Style>
+                            <Style TargetType="ItemsControl">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasLoot}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.Style>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource LootItemStyle}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontWeight="SemiBold" FontSize="13"
+                                                       Foreground="{StaticResource AccentBrush}"/>
+                                            <TextBlock Text="{Binding Description}"
+                                                       FontSize="11" TextWrapping="Wrap"
+                                                       Foreground="{StaticResource MutedTextBrush}"
+                                                       Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="12,0,0,0"
+                                                    HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Rarity}"
+                                                       FontSize="10" FontWeight="Bold"
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       HorizontalAlignment="Right"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding GoldValue, StringFormat={}{0:N0}}"
+                                                           FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
+                                                <TextBlock Text=" gp" FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

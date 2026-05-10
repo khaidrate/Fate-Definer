@@ -1,0 +1,187 @@
+<UserControl x:Class="FateDefiner.Views.FactionTrackerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Page Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Factions &amp; NPCs" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="Track organizations, key figures, and their relationships"
+                       Foreground="{StaticResource MutedTextBrush}" FontSize="12"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="240"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ══ LEFT: Faction List ══ -->
+            <Border Grid.Column="0" Style="{StaticResource CardPanelStyle}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="FACTIONS"
+                               Style="{StaticResource SectionLabelStyle}"/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Content="+ Add" Command="{Binding AddFactionCommand}"
+                                Padding="10,6" FontSize="12" Margin="0,0,6,0"/>
+                        <Button Content="Delete" Command="{Binding DeleteFactionCommand}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Padding="10,6" FontSize="12"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{Binding StatusMessage}"
+                               FontSize="10" Foreground="{StaticResource MutedTextBrush}"
+                               Margin="0,0,0,8"/>
+
+                    <ListBox ItemsSource="{Binding Factions}"
+                             SelectedItem="{Binding SelectedFaction}"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="2,3">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="SemiBold" FontSize="13"/>
+                                    <TextBlock Text="{Binding Alignment}"
+                                               FontSize="10"
+                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- ══ CENTER: Faction Details ══ -->
+            <Border Grid.Column="2" Style="{StaticResource CardPanelStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel DataContext="{Binding SelectedFaction}">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <TextBlock Text="FACTION DETAILS" Style="{StaticResource SectionLabelStyle}"/>
+
+                        <TextBlock Text="Name" Style="{StaticResource SectionLabelStyle}"/>
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                 FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+                        <TextBlock Text="Alignment" Style="{StaticResource SectionLabelStyle}"/>
+                        <TextBox Text="{Binding Alignment, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,12"/>
+
+                        <TextBlock Text="Description" Style="{StaticResource SectionLabelStyle}"/>
+                        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="70" TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+
+                        <TextBlock Text="Goals &amp; Motivations" Style="{StaticResource SectionLabelStyle}"/>
+                        <TextBox Text="{Binding Goals, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="60" TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+
+                        <TextBlock Text="Relationship Notes" Style="{StaticResource SectionLabelStyle}"/>
+                        <TextBox Text="{Binding RelationshipNotes, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+
+                        <Button Content="Save Changes"
+                                Command="{Binding DataContext.SaveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- ══ RIGHT: NPC List ══ -->
+            <Border Grid.Column="4" Style="{StaticResource CardPanelStyle}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="NPCs IN FACTION"
+                               Style="{StaticResource SectionLabelStyle}"/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Content="+ NPC" Command="{Binding AddNPCCommand}"
+                                Padding="10,6" FontSize="12" Margin="0,0,6,0"/>
+                        <Button Content="Remove" Command="{Binding DeleteNPCCommand}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Padding="10,6" FontSize="12"/>
+                    </StackPanel>
+
+                    <ListBox DockPanel.Dock="Top" ItemsSource="{Binding NPCs}"
+                             SelectedItem="{Binding SelectedNPC}"
+                             Height="180"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             Margin="0,0,0,12">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="2,2">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="SemiBold" FontSize="13"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Race}" FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <TextBlock Text=" · " FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <TextBlock Text="{Binding Role}" FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- NPC Detail editor -->
+                    <ScrollViewer DataContext="{Binding SelectedNPC}"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+
+                            <Separator/>
+                            <TextBlock Text="NPC DETAILS" Style="{StaticResource SectionLabelStyle}"/>
+
+                            <TextBlock Text="Name" Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                     FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Race" Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBox Text="{Binding Race, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Role / Title" Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBox Text="{Binding Role, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Attitude" Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBox Text="{Binding Attitude, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Notes" Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="70" TextWrapping="Wrap" AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

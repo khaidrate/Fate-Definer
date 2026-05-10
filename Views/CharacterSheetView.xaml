@@ -1,0 +1,324 @@
+<UserControl x:Class="FateDefiner.Views.CharacterSheetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ LEFT: Character list ══ -->
+        <Border Grid.Column="0" Style="{StaticResource CardPanelStyle}">
+            <DockPanel>
+
+                <!-- Search + buttons -->
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <TextBlock Text="CHARACTERS" Style="{StaticResource SectionLabelStyle}"/>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="+ Add" Command="{Binding AddCharacterCommand}"
+                                Padding="10,6" FontSize="12" Margin="0,0,6,0"/>
+                        <Button Content="Delete" Command="{Binding DeleteCharacterCommand}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Padding="10,6" FontSize="12"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="10"
+                               Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <ListBox ItemsSource="{Binding Characters}"
+                         SelectedItem="{Binding SelectedCharacter}"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="2,3">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Lvl " FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock Text="{Binding Level}" FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock Text=" " FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock Text="{Binding Race}" FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock Text=" " FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock Text="{Binding Class}" FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </DockPanel>
+        </Border>
+
+        <!-- ══ RIGHT: Character Details ══ -->
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!-- Empty state -->
+                <TextBlock Text="Select or create a character to view their sheet."
+                           Foreground="{StaticResource MutedTextBrush}"
+                           TextWrapping="Wrap" Margin="0,20,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasSelection}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <StackPanel DataContext="{Binding SelectedCharacter}">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <!-- ── Header ── -->
+                    <Border Style="{StaticResource CardPanelStyle}" Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Name"
+                                       Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="0" Text="Race"
+                                       Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBlock Grid.Column="2" Grid.Row="0" Text="Class"
+                                       Style="{StaticResource SectionLabelStyle}"/>
+                            <TextBlock Grid.Column="3" Grid.Row="0" Text="Level"
+                                       Style="{StaticResource SectionLabelStyle}"/>
+
+                            <TextBox Grid.Column="0" Grid.Row="2" Margin="0,0,10,0"
+                                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                     FontSize="16" FontWeight="Bold"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Margin="0,0,10,0"
+                                     Text="{Binding Race, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Column="2" Grid.Row="2" Margin="0,0,10,0"
+                                     Text="{Binding Class, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Column="3" Grid.Row="2"
+                                     Text="{Binding Level, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- ── Ability Scores ── -->
+                    <Border Style="{StaticResource CardPanelStyle}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="ABILITY SCORES" Style="{StaticResource SectionLabelStyle}"/>
+                            <WrapPanel>
+                                <!-- STR -->
+                                <Border Style="{StaticResource StatBoxStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="STR" Style="{StaticResource SectionLabelStyle}"
+                                                   HorizontalAlignment="Center" FontSize="10"/>
+                                        <TextBox Text="{Binding Stats.Strength, UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="22" FontWeight="Bold"
+                                                 Foreground="{StaticResource AccentBrush}"
+                                                 HorizontalContentAlignment="Center"
+                                                 Background="Transparent" BorderThickness="0" Padding="0"/>
+                                        <TextBlock Text="{Binding Stats.StrengthMod}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- DEX -->
+                                <Border Style="{StaticResource StatBoxStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="DEX" Style="{StaticResource SectionLabelStyle}"
+                                                   HorizontalAlignment="Center" FontSize="10"/>
+                                        <TextBox Text="{Binding Stats.Dexterity, UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="22" FontWeight="Bold"
+                                                 Foreground="{StaticResource AccentBrush}"
+                                                 HorizontalContentAlignment="Center"
+                                                 Background="Transparent" BorderThickness="0" Padding="0"/>
+                                        <TextBlock Text="{Binding Stats.DexterityMod}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- CON -->
+                                <Border Style="{StaticResource StatBoxStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="CON" Style="{StaticResource SectionLabelStyle}"
+                                                   HorizontalAlignment="Center" FontSize="10"/>
+                                        <TextBox Text="{Binding Stats.Constitution, UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="22" FontWeight="Bold"
+                                                 Foreground="{StaticResource AccentBrush}"
+                                                 HorizontalContentAlignment="Center"
+                                                 Background="Transparent" BorderThickness="0" Padding="0"/>
+                                        <TextBlock Text="{Binding Stats.ConstitutionMod}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- INT -->
+                                <Border Style="{StaticResource StatBoxStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="INT" Style="{StaticResource SectionLabelStyle}"
+                                                   HorizontalAlignment="Center" FontSize="10"/>
+                                        <TextBox Text="{Binding Stats.Intelligence, UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="22" FontWeight="Bold"
+                                                 Foreground="{StaticResource AccentBrush}"
+                                                 HorizontalContentAlignment="Center"
+                                                 Background="Transparent" BorderThickness="0" Padding="0"/>
+                                        <TextBlock Text="{Binding Stats.IntelligenceMod}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- WIS -->
+                                <Border Style="{StaticResource StatBoxStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="WIS" Style="{StaticResource SectionLabelStyle}"
+                                                   HorizontalAlignment="Center" FontSize="10"/>
+                                        <TextBox Text="{Binding Stats.Wisdom, UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="22" FontWeight="Bold"
+                                                 Foreground="{StaticResource AccentBrush}"
+                                                 HorizontalContentAlignment="Center"
+                                                 Background="Transparent" BorderThickness="0" Padding="0"/>
+                                        <TextBlock Text="{Binding Stats.WisdomMod}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- CHA -->
+                                <Border Style="{StaticResource StatBoxStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="CHA" Style="{StaticResource SectionLabelStyle}"
+                                                   HorizontalAlignment="Center" FontSize="10"/>
+                                        <TextBox Text="{Binding Stats.Charisma, UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="22" FontWeight="Bold"
+                                                 Foreground="{StaticResource AccentBrush}"
+                                                 HorizontalContentAlignment="Center"
+                                                 Background="Transparent" BorderThickness="0" Padding="0"/>
+                                        <TextBlock Text="{Binding Stats.CharismaMod}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+
+                            <!-- Combat stats row -->
+                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="MAX HP" Style="{StaticResource SectionLabelStyle}"/>
+                                    <TextBox Text="{Binding Stats.MaxHP, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="70"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="CURRENT HP" Style="{StaticResource SectionLabelStyle}"/>
+                                    <TextBox Text="{Binding Stats.CurrentHP, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="70"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="AC" Style="{StaticResource SectionLabelStyle}"/>
+                                    <TextBox Text="{Binding Stats.ArmorClass, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="60"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="SPEED (ft)" Style="{StaticResource SectionLabelStyle}"/>
+                                    <TextBox Text="{Binding Stats.Speed, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="60"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="PROF BONUS" Style="{StaticResource SectionLabelStyle}"/>
+                                    <TextBox Text="{Binding Stats.ProficiencyBonus, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="60"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ── Inventory ── -->
+                    <Border Style="{StaticResource CardPanelStyle}" Margin="0,0,0,12"
+                            DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="INVENTORY"
+                                       Style="{StaticResource SectionLabelStyle}"/>
+
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="200" Margin="0,0,8,0"/>
+                                <Button Content="+ Add Item" Command="{Binding AddItemCommand}"
+                                        Padding="10,6" FontSize="12" Margin="0,0,6,0"/>
+                                <Button Content="Remove" Command="{Binding RemoveItemCommand}"
+                                        Style="{StaticResource DangerButtonStyle}"
+                                        Padding="10,6" FontSize="12"/>
+                            </StackPanel>
+
+                            <ListBox ItemsSource="{Binding Inventory}"
+                                     SelectedItem="{Binding SelectedItem}"
+                                     Height="130"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Quantity}" FontWeight="Bold"/>
+                                            <TextBlock Text="x "/>
+                                            <TextBlock Text="{Binding Name}"/>
+                                            <TextBlock Text=" (" Foreground="{StaticResource MutedTextBrush}"/>
+                                            <TextBlock Text="{Binding Type}" Foreground="{StaticResource MutedTextBrush}"/>
+                                            <TextBlock Text=")" Foreground="{StaticResource MutedTextBrush}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- ── Notes + Save ── -->
+                    <Border Style="{StaticResource CardPanelStyle}"
+                            DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"
+                                        Margin="0,0,0,6">
+                                <TextBlock Text="CHARACTER NOTES"
+                                           Style="{StaticResource SectionLabelStyle}"
+                                           VerticalAlignment="Center"/>
+                                <Button Content="Save All" Command="{Binding SaveCommand}"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Padding="12,5" FontSize="11"
+                                        Margin="16,0,0,0"/>
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           Foreground="{StaticResource AccentBrush}"
+                                           FontSize="11" Margin="12,0,0,0"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <TextBox Text="{Binding SelectedCharacter.Notes, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="100" TextWrapping="Wrap" AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"/>
+                        </DockPanel>
+                    </Border>
+
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
