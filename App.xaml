@@ -1,0 +1,38 @@
+<Application x:Class="FateDefiner.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FateDefiner.ViewModels"
+             xmlns:views="clr-namespace:FateDefiner.Views"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/DarkTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--
+                MVVM DataTemplate mapping: WPF automatically selects the correct View
+                when a ViewModel is placed inside a ContentControl.
+                No code-behind switching needed — pure MVVM.
+            -->
+            <DataTemplate DataType="{x:Type vm:CampaignDashboardViewModel}">
+                <views:CampaignDashboardView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CharacterSheetViewModel}">
+                <views:CharacterSheetView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:FactionTrackerViewModel}">
+                <views:FactionTrackerView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NotesEditorViewModel}">
+                <views:NotesEditorView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DiceRollerViewModel}">
+                <views:DiceRollerView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:EncounterGeneratorViewModel}">
+                <views:EncounterGeneratorView/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
